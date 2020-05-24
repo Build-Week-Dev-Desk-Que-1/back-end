@@ -5,7 +5,15 @@ module.exports = {
   development: {
     client: 'sqlite3',
     connection: {
-      filename: './dev.sqlite3'
+      filename: './data/devque.db3'
+    },
+    seeds: {
+      directory: "./data/seed"
+    },
+    pool: {
+      afterCreate: function(connection, done) {
+        connection.run("PRAGMA foreign_keys = ON", done);
+      }
     }
   },
 
@@ -25,20 +33,32 @@ module.exports = {
     }
   },
 
-  production: {
-    client: 'postgresql',
+  test: {
+    client: "sqlite3",
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      filename: "./data/devque.db3"
+    },
+    useNullAsDefault: true,
+    migrations: {
+      directory: "./data/migration"
+    },
+    seeds: {
+      directory: "./data/seed"
     },
     pool: {
-      min: 2,
-      max: 10
-    },
+      afterCreate: function(connection, done) {
+        connection.run("PRAGMA foreign_keys = ON", done);
+      }
+    }
+  },
+  production: {
+    client: "pg",
+    connection: process.env.DATABASE_URL,
     migrations: {
-      tableName: 'knex_migrations'
+      directory: "./data/migration"
+    },
+    seeds: {
+      directory: "./data/seed"
     }
   }
-
 };
