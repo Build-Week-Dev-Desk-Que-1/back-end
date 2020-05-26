@@ -63,5 +63,34 @@ router.get('/ticket', Restricted, (req, res) => {
     } else res.status(400).json({ message: "Please specify the user role!!" });
 })
 
+//Restricted only to helpers
+// make sure to place ticketid in the :id 2
+// body will require "id": 7 for techid
+//localhost: 4000 / users / ticket / 2 / assign
+
+router.post('/ticket/:id/assign', (req, res) => {
+    const techid = req.user.id;
+    const { id } = req.params;
+    req.user.role === 'helper' ? Users.findAssignedTicketById(id)
+        .then(ticket => {
+            if (!ticket) {
+                Users.assignTicket(techid, id)
+                    .then(tickets => {
+                        Tickets.update(id, { assigned: true })
+                        res.status(200).json(tickets);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({ message: "Failed to assign ticket." })
+                    })
+            } else res.status(400).json({ message: "Ticket has already been assigned." })
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ message: "Error assigning the ticket." })
+        }) :
+        res.status(400).json({ message: "Ticket assignment restricted to helpers only." });
+});
+
 
 module.exports = router;

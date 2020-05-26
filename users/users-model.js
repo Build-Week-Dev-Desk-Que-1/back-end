@@ -1,10 +1,12 @@
 const db = require("../data/dbConfig.js");
 module.exports = {
     add,
+    assignTicket,
     findBy,
     findUser,
     findStudent,
-    findAssignedTickets
+    findAssignedTickets,
+    findAssignedTicketById
 
 
 };
@@ -47,3 +49,17 @@ function findAssignedTickets(id) {
             'solution'
         );
 }
+
+async function findAssignedTicketById(ticketid) {
+    return await db('asg_tickets')
+        .select('id', 'techid', 'ticketid')
+        .where({ ticketid })
+        .first();
+}
+
+async function assignTicket(techid, ticketid) {
+    return await db('asg_tickets')
+        .insert({ techid, ticketid }, 'id')
+        .then(() => findAssignedTickets(techid));
+}
+
