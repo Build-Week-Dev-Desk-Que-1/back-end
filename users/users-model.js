@@ -9,6 +9,7 @@ module.exports = {
     findAssignedTickets,
     findAssignedTicketById,
     findStdTicketById,
+    remove,
     removeTicket,
     removeAsgTicket
 
@@ -67,16 +68,18 @@ async function assignTicket(helperid, ticketid) {
         .then(() => findAssignedTickets(helperid));
 }
 
+function remove(id) {
+    return db('users')
+        .where({ id: id })
+        .del();
+}
+
 function removeAsgTicket(ticketid) {
     return db('asg_tickets')
         .where({ ticketid })
         .del();
 }
-function removeAsgTicket(ticketid) {
-    return db('asg_tickets')
-        .where({ ticketid })
-        .del();
-}
+
 async function removeTicket(ticketid) {
     return await db('stud_tickets')
         .where({ ticketid })
