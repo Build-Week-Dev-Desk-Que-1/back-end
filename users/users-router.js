@@ -36,4 +36,32 @@ router.get('/getid/:id', Restricted, (req, res) => {
 })
 
 
+//localhost:4000/users/ticket
+// @desc GET User tickets
+// @access Private
+//localhost:4000/users/
+router.get('/ticket', Restricted, (req, res) => {
+    const userid = req.user.id;
+    if (req.user.role === 'student') {
+        Users.findStudent(userid)
+            .then(tickets => {
+                res.status(200).json(tickets)
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({ message: "Unable to get tickets!!" })
+            })
+    } else if (req.user.role === 'helper') {
+        Users.findAssignedTickets(userid)
+            .then(tickets => {
+                res.status(200).json(tickets)
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({ message: "Unable to get tickets!!" })
+            })
+    } else res.status(400).json({ message: "Please specify the user role!!" });
+})
+
+
 module.exports = router;

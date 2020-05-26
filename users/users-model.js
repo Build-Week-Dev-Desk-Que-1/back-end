@@ -2,7 +2,10 @@ const db = require("../data/dbConfig.js");
 module.exports = {
     add,
     findBy,
-    findUser
+    findUser,
+    findStudent,
+    findAssignedTickets
+
 
 };
 
@@ -23,4 +26,24 @@ function findUser() {
 function findById(id) {
     return db('users')
         .select('id', 'username', 'role').where({ id }).first();
+}
+
+function findStudent(id) {
+    return db('stud_tickets as st')
+        .where('studentid', id)
+        .join('tickets as t', 'st.ticketid', 't.id')
+        .select('st.ticketid', 't.title', 't.description', 't.tried', 't.category', 'solution');
+}
+function findAssignedTickets(id) {
+    return db('asg_tickets as at')
+        .where('techid', id)
+        .join('tickets as t', 'at.ticketid', 't.id')
+        .select(
+            'at.ticketid',
+            't.title',
+            't.description',
+            't.tried',
+            't.category',
+            'solution'
+        );
 }
