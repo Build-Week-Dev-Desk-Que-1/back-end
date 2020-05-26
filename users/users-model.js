@@ -7,6 +7,7 @@ module.exports = {
     findStudent,
     findAssignedTickets,
     findAssignedTicketById,
+    findStdTicketById,
     removeAsgTicket
 
 
@@ -68,4 +69,10 @@ function removeAsgTicket(ticketid) {
     return db('asg_tickets')
         .where({ ticketid })
         .del();
+}
+
+function findStdTicketById(id) {
+    return db('stud_tickets')
+        .where({ id })
+        .first();
 }
