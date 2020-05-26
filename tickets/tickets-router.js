@@ -43,4 +43,29 @@ router.get('/closed', (req, res) => {
             res.status(500).json(err)
         });
 })
+
+
+// @route PUT api/tickets/newticket
+// @desc POST new ticket as a student
+// @access Private
+//localhost:4000/tickets
+router.post('/', (req, res) => {
+    const { title, description, tried, category } = req.body;
+    if (req.user.role === 'student') {
+        if (!title || !description || !tried || !category) {
+            res.status(400).json({ message: "Something is missing!!!" });
+        } else Tickets.add(req.body)
+            .then(ticket => {
+                Tickets.addToStudent(req.user.id, ticket.id)
+                    .then(ticket => {
+                        res.status(201).json(ticket);
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({ message: "Unable to add this ticket!!!" })
+            })
+    } else res.status(400).json({ message: "Only students can do this feature!!!" })
+});
+
 module.exports = router;
