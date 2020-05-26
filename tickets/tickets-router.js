@@ -68,4 +68,27 @@ router.post('/', (req, res) => {
     } else res.status(400).json({ message: "Only students can do this feature!!!" })
 });
 
+
+// @route GET api/tickets/:id/
+// @desc get tickets by id 
+// @access Private
+//https: //devdeskapi.herokuapp.com/api/tickets/1
+//localhost:4000/tickets/1
+router.get('/:id', (req, res) => {
+    Tickets.findById(req.params.id)
+        .then(tickets => {
+            if (tickets) {
+                res.json({
+                    msg: "Ticket was found!!",
+                    tickets
+                })
+            } else {
+                res.status(404).json({ message: "The ticket with the specified ID does not exist" })
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Could not get ticket", err })
+        })
+})
+
 module.exports = router;
