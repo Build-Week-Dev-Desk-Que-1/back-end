@@ -6,7 +6,8 @@ module.exports = {
     findUser,
     findStudent,
     findAssignedTickets,
-    findAssignedTicketById
+    findAssignedTicketById,
+    removeAsgTicket
 
 
 };
@@ -38,7 +39,7 @@ function findStudent(id) {
 }
 function findAssignedTickets(id) {
     return db('asg_tickets as at')
-        .where('techid', id)
+        .where('helperid', id)
         .join('tickets as t', 'at.ticketid', 't.id')
         .select(
             'at.ticketid',
@@ -52,14 +53,19 @@ function findAssignedTickets(id) {
 
 async function findAssignedTicketById(ticketid) {
     return await db('asg_tickets')
-        .select('id', 'techid', 'ticketid')
+        .select('id', 'helperid', 'ticketid')
         .where({ ticketid })
         .first();
 }
 
-async function assignTicket(techid, ticketid) {
+async function assignTicket(helperid, ticketid) {
     return await db('asg_tickets')
-        .insert({ techid, ticketid }, 'id')
-        .then(() => findAssignedTickets(techid));
+        .insert({ helperid, ticketid }, 'id')
+        .then(() => findAssignedTickets(helperid));
 }
 
+function removeAsgTicket(ticketid) {
+    return db('asg_tickets')
+        .where({ ticketid })
+        .del();
+}

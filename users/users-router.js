@@ -92,5 +92,61 @@ router.post('/ticket/:id/assign', (req, res) => {
         res.status(400).json({ message: "Ticket assignment restricted to helpers only." });
 });
 
+//reassigned tickets back to the que removes from users list.
+//localhost: 4000 / users / tickets / 4 / reassign
+router.put('/tickets/:id/reassign', (req, res) => {
+    const { id } = req.params;
+    req.user.role === 'helper' ?
+        Users.findAssignedTicketById(id)
+        .then(ticket => {
+            if (ticket) {
+                if (ticket.techid) {
+                    // Sets ticket assignment to false and deletes assigned ticket entry
+                    return Tickets.update(id, { assigned: false })
+                        .then(updatedTicket => {
+                            Users.removeAsgTicket(id)
+                                .then(() => {
+                                    res.status(200).json(updatedTicket)
+                                });
+                        });
+                } else res.status(400).json({ message: "Cannot reassign ticket if it is not assigned to you." })
+            } else res.status(404).json({ message: "Ticket not found." });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ message: "Error updating the ticket." })
+        }) :
+        res.status(400).json({ message: "Ticket updating restricted to helpers." });
+});
+
+
+// RESOLVE TICKET
+// @route PUT api/users/tickets/:id/resolved
+// @desc Update User
+// @access Private
+router.put('/ticket/:id/resolved', (req, res) => {
+    const { id } = req.params;
+    const userid = req.user.id;
+    const { solution } = req.body;
+    if (solution) {
+        req.user.role === 'helper' ? Users.findAssignedTicketById(id)
+            .then(ticket => {
+                if (ticket) {
+                    if (ticket.techid === userid) {
+                        Tickets.update(id, { solution, resolved: true })
+                            .then(updatedTicket => {
+                                res.status(200).json(updatedTicket)
+                            });
+                    } else res.status(400).json({ message: "Unable to resolve unassigned ticket." })
+                } else res.status(404).json({ message: "The ticket not found" });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({ message: "Unable to update ticket." })
+            }) :
+            res.status(400).json({ message: "Ticket updating restricted to techs only." });
+    } else res.status(400).json({ message: "Please add a solution to the resolved ticket." });
+});
+
 
 module.exports = router;
