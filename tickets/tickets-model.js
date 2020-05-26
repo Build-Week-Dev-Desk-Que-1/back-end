@@ -4,7 +4,10 @@ module.exports = {
     addToStudent,
     find,
     findBy,
-    findById
+    findById,
+    getBy,
+    remove,
+    update,
     
 };
 
@@ -33,4 +36,20 @@ function findById(id) {
         .select('id', 'title', 'description', 'solution')
         .where({ id })
         .first();
+}
+
+function getBy(data) {
+    return db('tickets')
+        .where({ data })
+}
+
+function remove(id) {
+    return db('tickets')
+        .where({ id })
+        .del();
+}
+
+async function update(id, changes) {
+    return await db('tickets')
+        .where({ id }).update(changes).then(() => findById(id));
 }

@@ -72,7 +72,6 @@ router.post('/', (req, res) => {
 // @route GET api/tickets/:id/
 // @desc get tickets by id 
 // @access Private
-//https: //devdeskapi.herokuapp.com/api/tickets/1
 //localhost:4000/tickets/1
 router.get('/:id', (req, res) => {
     Tickets.findById(req.params.id)
@@ -88,6 +87,25 @@ router.get('/:id', (req, res) => {
         })
         .catch(err => {
             res.status(500).json({ message: "Could not get ticket", err })
+        })
+})
+
+// DELETE A TICKET
+// @route DELETE /tickets/:id
+// @desc delete ticket by :id
+// @access Private
+//localhost:4000/tickets/1
+router.delete('/:id', (req, res) => {
+    Tickets.remove(req.params.id)
+        .then(tickets => {
+            if (tickets) {
+                res.json({ message: "Ticket removed!!!" })
+            } else {
+                res.status(404).json({ message: "Ticket with specified ID does not exist" })
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Ticket could not be removed", err })
         })
 })
 
