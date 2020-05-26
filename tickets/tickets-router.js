@@ -30,4 +30,17 @@ router.get('/open', (req, res) => {
             res.status(500).json(err)
         });
 });
+
+// @route GET api/tickets/closed
+// @desc get OPEN tickets not resolved
+// @access Private
+router.get('/closed', (req, res) => {
+    Tickets.find({ resolved: true })
+        .then(tickets => {
+            res.status(200).json(tickets)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        });
+})
 module.exports = router;
