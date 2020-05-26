@@ -27,6 +27,7 @@ https://devqueapi.herokuapp.com/
 - Reassign tickets to the que
 - Resolve tickets
 - Delete tickets by id
+
 | HTTP | Path               | Desc                                   | Data|
 |-|-|-|-|
 | GET | /users            | Gets all users     |  Output `{"id", "username":"", "email", "password", "role"}`|
@@ -35,12 +36,13 @@ https://devqueapi.herokuapp.com/
 | PUT | /users/tickets/:id/reassign    | Returns ticket back to the queue.   |   Expects `{no user information on body, just techid "id" and ticket 7 -> :id/reassign}`|
 | POST| /users/ticket/:id/resolved | resolves ticket to a user by id. only helpers can assign/resolve tickets  |  Expects `{"solution": "some solution" }`
 | DELETE | /users/tickets/:id | Deletes a user ticket by id.   |  Expects `{no user information on body, just "id"}`|
+
 # `Tickets` Table
 
 - Add a new ticket
 - Obtain list of tickets and ticket by id
 - Get list of open and closed tickets
-- Delete ticket by id
+- Delete ticket by id only students can delete ticket
 
 | HTTP | Path               | Desc                                   | Data|
 |-|-|-|-|
