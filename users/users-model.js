@@ -2,6 +2,7 @@ const db = require("../data/dbConfig.js");
 module.exports = {
     add,
     assignTicket,
+    change,
     findBy,
     findById,
     findUser,
@@ -11,16 +12,33 @@ module.exports = {
     findStdTicketById,
     remove,
     removeTicket,
-    removeAsgTicket
+    removeAsgTicket,
+    setUserLogs
 
 
 };
+
+function change(user, id) {
+    return db('users')
+        .where({ id })
+        .change(user);
+}
+
+async function setUserLogs(data) {
+    if (data.userid && data.title && data.description) {
+        const [logs] = await db('logs').insert(data);
+        return ({ status: 201, msg: logs });
+    } else {
+        return ({ status: 418, msg: "Incomplete query data. Check that all fields are sent." })
+    }
+}
 
 function add(user) {
     return db('users').insert(user, "id").then(ids => { const [id] = ids; return findById(id); }).catch(error => {
         return res.status(500).json({ message: 'failed to add new user' });
     });
 }
+
 
 function findBy(filter) {
     return db("users").where(filter);
@@ -31,8 +49,7 @@ function findUser() {
 }
 
 function findById(id) {
-    return db('users')
-        .select('id', 'username', 'role').where({ id }).first();
+    return db('users').select('id', 'username', 'role').where({ id }).first();
 }
 
 function findStudent(id) {
