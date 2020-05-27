@@ -33,22 +33,12 @@ async function setUserLogs(data) {
     }
 }
 
-// function add(user) {
-//     return db('users').insert(user, "id").then(ids => { const [id] = ids; return findById(id); }).catch(error => {
-//         return res.status(500).json({ message: 'failed to add new user' });
-//     });
-// }
-// async function add(user) {
-//     const [id] = await db("users").insert(user, "id").then(ids => { const [id] = ids; return findById(id); });
+function add(user) {
+    return db('users').insert(user, "id").then(ids => { const [id] = ids; return findById(id); }).catch(error => {
+        return res.status(500).json({ message: 'failed to add new user' });
+    });
+}
 
-//     return findById(id);
-// }
-
-async function add(user) {
-    return await db('users')
-      .insert(user, 'id')
-      .then(([id]) => findById(id));
-  }
 
 function findBy(filter) {
     return db("users").where(filter);
