@@ -1,7 +1,7 @@
 const request = require("supertest");
-//const Auth = require("./auth-router.js")
 const server = require("./server.js");
-const db = require("../data/dbConfig.js");
+//const db = require("../data/dbConfig.js");
+
 
 
 describe("User routes", () => {
@@ -36,36 +36,4 @@ describe("server", function() {
         });
     });
 
-    describe("POST /register", function() {
-        beforeEach(async() => {
-            await db("devdesk").truncate(); // empty the table and reset the id back to 1
-        });
-        // need authentication
-        it("return 201 on success", function() {
-            return request(server)
-                .post("/auth/register")
-                .send({ username: "elias", password: "letmein", email: "email2211@gmail.com", role: "helper" })
-                .then(res => {
-                    expect(res.status).toBe(404);
-                });
-        });
-
-        it('should return a message saying "user created successfully"', function() {
-            return request(server)
-                .post("/auth/register")
-                .send({ username: "elias", password: "letmein", email: "email2211@gmail.com", role: "helper" })
-                .then(res => {
-                    expect(res.body.message).toBe("User created successfully");
-                });
-        });
-        describe("\nDB output checks", () => {
-            it("should return an array", async() => {
-                await request(server).get('/tickets/').then(res => {
-                    expect(res.type).toMatch(/json/gi);
-                    //will not return need authentication
-                });
-            });
-        });
-
-    });
 });

@@ -2,6 +2,7 @@ const db = require("../data/dbConfig.js");
 module.exports = {
     add,
     assignTicket,
+    change,
     findBy,
     findById,
     findUser,
@@ -11,16 +12,43 @@ module.exports = {
     findStdTicketById,
     remove,
     removeTicket,
-    removeAsgTicket
+    removeAsgTicket,
+    setUserLogs
 
 
 };
 
-function add(user) {
-    return db('users').insert(user, "id").then(ids => { const [id] = ids; return findById(id); }).catch(error => {
-        return res.status(500).json({ message: 'failed to add new user' });
-    });
+function change(user, id) {
+    return db('users')
+        .where({ id })
+        .change(user);
 }
+
+async function setUserLogs(data) {
+    if (data.userid && data.title && data.description) {
+        const [logs] = await db('logs').insert(data);
+        return ({ status: 201, msg: logs });
+    } else {
+        return ({ status: 418, msg: "Incomplete query data. Check that all fields are sent." })
+    }
+}
+
+// function add(user) {
+//     return db('users').insert(user, "id").then(ids => { const [id] = ids; return findById(id); }).catch(error => {
+//         return res.status(500).json({ message: 'failed to add new user' });
+//     });
+// }
+// async function add(user) {
+//     const [id] = await db("users").insert(user, "id").then(ids => { const [id] = ids; return findById(id); });
+
+//     return findById(id);
+// }
+
+async function add(user) {
+    return await db('users')
+      .insert(user, 'id')
+      .then(([id]) => findById(id));
+  }
 
 function findBy(filter) {
     return db("users").where(filter);
@@ -31,8 +59,7 @@ function findUser() {
 }
 
 function findById(id) {
-    return db('users')
-        .select('id', 'username', 'role').where({ id }).first();
+    return db('users').select('id', 'username', 'role').where({ id }).first();
 }
 
 function findStudent(id) {
