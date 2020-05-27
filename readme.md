@@ -18,7 +18,7 @@ https://devqueapi.herokuapp.com/
 | POST | /auth/register | Registers new user. | Expects `{"username":", "password", "email", "role":"}`|
 | POST | /auth/login    | Logs in a user.   |  Expects `{"username":"", "password":""}`|
 
-# `Users` Table
+# `Users Table`
 
 - Update users by id
 - Delete users by id
